@@ -106,7 +106,7 @@ If this flag is passed, the behavior can still be set to not abort through
 ### `--allow-addons`
 
 <!-- YAML
-added: REPLACEME
+added: v21.6.0
 -->
 
 > Stability: 1.1 - Active development
@@ -367,7 +367,7 @@ Currently the support for run-time snapshot is experimental in that:
 ### `--build-snapshot-config`
 
 <!-- YAML
-added: REPLACEME
+added: v21.6.0
 -->
 
 > Stability: 1 - Experimental
@@ -545,7 +545,7 @@ For example, the following script will emit the
 [DEP0025 `require('node:sys')`][DEP0025 warning], but not any Experimental
 Warnings (such as
 [ExperimentalWarning: `vm.measureMemory` is an experimental feature][]
-in <=v21) when executed with `node --disable-warning=ExperimentalWarnings`:
+in <=v21) when executed with `node --disable-warning=ExperimentalWarning`:
 
 ```mjs
 import sys from 'node:sys';
@@ -666,6 +666,10 @@ of `--enable-source-maps`.
 
 <!-- YAML
 added: v20.6.0
+changes:
+  - version: v21.7.0
+    pr-url: https://github.com/nodejs/node/pull/51289
+    description: Add support to multi-line values.
 -->
 
 Loads environment variables from a file relative to the current directory,
@@ -700,6 +704,20 @@ They are omitted from the values.
 
 ```text
 USERNAME="nodejs" # will result in `nodejs` as the value.
+```
+
+Multi-line values are supported:
+
+```text
+MULTI_LINE="THIS IS
+A MULTILINE"
+# will result in `THIS IS\nA MULTILINE` as the value.
+```
+
+Export keyword before a key is ignored:
+
+```text
+export USERNAME="nodejs" # will result in `nodejs` as the value.
 ```
 
 ### `-e`, `--eval "script"`
@@ -759,7 +777,7 @@ added:
   - v20.10.0
 -->
 
-> Stability: 1.0 - Early development
+> Stability: 1.1 - Active development
 
 Node.js will inspect the source code of ambiguous input to determine whether it
 contains ES module syntax; if such syntax is detected, the input will be treated
@@ -774,9 +792,15 @@ Ambiguous input is defined as:
   `--experimental-default-type` are specified.
 
 ES module syntax is defined as syntax that would throw when evaluated as
-CommonJS. This includes `import` and `export` statements and `import.meta`
-references. It does _not_ include `import()` expressions, which are valid in
-CommonJS.
+CommonJS. This includes the following:
+
+* `import` statements (but _not_ `import()` expressions, which are valid in
+  CommonJS).
+* `export` statements.
+* `import.meta` references.
+* `await` at the top level of a module.
+* Lexical redeclarations of the CommonJS wrapper variables (`require`, `module`,
+  `exports`, `__dirname`, `__filename`).
 
 ### `--experimental-import-meta-resolve`
 
@@ -852,6 +876,18 @@ added: v11.8.0
 -->
 
 Use the specified file as a security policy.
+
+### `--experimental-require-module`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+> Stability: 1.1 - Active Developement
+
+Supports loading a synchronous ES module graph in `require()`.
+
+See [Loading ECMAScript modules using `require()`][].
 
 ### `--experimental-sea-config`
 
@@ -930,16 +966,6 @@ added: v12.3.0
 -->
 
 Enable experimental WebAssembly module support.
-
-### `--experimental-websocket`
-
-<!-- YAML
-added:
-  - v21.0.0
-  - v20.10.0
--->
-
-Enable experimental [`WebSocket`][] support.
 
 ### `--force-context-aware`
 
@@ -1359,6 +1385,14 @@ added: v16.6.0
 
 Use this flag to disable top-level await in REPL.
 
+### `--no-experimental-websocket`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+Use this flag to disable experimental [`WebSocket`][] support.
+
 ### `--no-extra-info-on-fatal-exception`
 
 <!-- YAML
@@ -1562,6 +1596,18 @@ changes:
 
 Identical to `-e` but prints the result.
 
+### `--experimental-print-required-tla`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+This flag is only useful when `--experimental-require-module` is enabled.
+
+If the ES module being `require()`'d contains top-level await, this flag
+allows Node.js to evaluate the module, try to locate the
+top-level awaits, and print their location to help users find them.
+
 ### `--prof`
 
 <!-- YAML
@@ -1731,6 +1777,15 @@ Enables report to be generated when the process exits due to an uncaught
 exception. Useful when inspecting the JavaScript stack in conjunction with
 native stack and other runtime environment data.
 
+### `--report-exclude-network`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+Exclude `header.networkInterfaces` from the diagnostic report. By default
+this is not set and the network interfaces are included.
+
 ### `-r`, `--require module`
 
 <!-- YAML
@@ -1840,6 +1895,15 @@ added:
 
 The maximum number of test files that the test runner CLI will execute
 concurrently. The default value is `os.availableParallelism() - 1`.
+
+### `--test-force-exit`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+Configures the test runner to exit the process once all known tests have
+finished executing even if the event loop would otherwise remain active.
 
 ### `--test-name-pattern`
 
@@ -2277,6 +2341,9 @@ added:
   - v18.11.0
   - v16.19.0
 changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/52074
+    description: Watch mode is now stable.
   - version:
       - v19.2.0
       - v18.13.0
@@ -2284,7 +2351,7 @@ changes:
     description: Test runner now supports running in watch mode.
 -->
 
-> Stability: 1 - Experimental
+> Stability: 2 - Stable
 
 Starts Node.js in watch mode.
 When in watch mode, changes in the watched files cause the Node.js process to
@@ -2306,9 +2373,13 @@ node --watch index.js
 added:
   - v18.11.0
   - v16.19.0
+changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/52074
+    description: Watch mode is now stable.
 -->
 
-> Stability: 1 - Experimental
+> Stability: 2 - Stable
 
 Starts Node.js in watch mode and specifies what paths to watch.
 When in watch mode, changes in the watched paths cause the Node.js process to
@@ -2487,13 +2558,14 @@ Node.js options that are allowed are:
 * `--experimental-network-imports`
 * `--experimental-permission`
 * `--experimental-policy`
+* `--experimental-print-required-tla`
+* `--experimental-require-module`
 * `--experimental-shadow-realm`
 * `--experimental-specifier-resolution`
 * `--experimental-top-level-await`
 * `--experimental-vm-modules`
 * `--experimental-wasi-unstable-preview1`
 * `--experimental-wasm-modules`
-* `--experimental-websocket`
 * `--force-context-aware`
 * `--force-fips`
 * `--force-node-api-uncaught-exceptions-policy`
@@ -2518,6 +2590,7 @@ Node.js options that are allowed are:
 * `--no-experimental-global-navigator`
 * `--no-experimental-global-webcrypto`
 * `--no-experimental-repl-await`
+* `--no-experimental-websocket`
 * `--no-extra-info-on-fatal-exception`
 * `--no-force-async-hooks-checks`
 * `--no-global-search-paths`
@@ -2535,6 +2608,7 @@ Node.js options that are allowed are:
 * `--redirect-warnings`
 * `--report-compact`
 * `--report-dir`, `--report-directory`
+* `--report-exclude-network`
 * `--report-filename`
 * `--report-on-fatalerror`
 * `--report-on-signal`
@@ -2602,10 +2676,14 @@ V8 options that are allowed are:
 
 <!-- node-options-v8 end -->
 
+<!-- node-options-others start -->
+
 `--perf-basic-prof-only-functions`, `--perf-basic-prof`,
 `--perf-prof-unwinding-info`, and `--perf-prof` are only available on Linux.
 
 `--enable-etw-stack-walking` is only available on Windows.
+
+<!-- node-options-others end -->
 
 ### `NODE_PATH=path[:…]`
 
@@ -2871,6 +2949,23 @@ threadpool by setting the `'UV_THREADPOOL_SIZE'` environment variable to a value
 greater than `4` (its current default value). For more information, see the
 [libuv threadpool documentation][].
 
+### `UV_USE_IO_URING=value`
+
+Enable or disable libuv's use of `io_uring` on supported platforms.
+
+On supported platforms, `io_uring` can significantly improve the performance of
+various asynchronous I/O operations.
+
+`io_uring` is disabled by default due to security concerns. When `io_uring`
+is enabled, applications must not change the user identity of the process at
+runtime. In this case, JavaScript functions such as [`process.setuid()`][] are
+unavailable, and native addons must not invoke system functions such as
+[`setuid(2)`][].
+
+This environment variable is implemented by a dependency of Node.js and may be
+removed in future versions of Node.js. No stability guarantees are provided for
+the behavior of this environment variable.
+
 ## Useful V8 options
 
 V8 has its own set of CLI options. Any V8 CLI option that is provided to `node`
@@ -2881,6 +2976,32 @@ covered by the Node.js stability guarantees. Many of the V8
 options are of interest only to V8 developers. Despite this, there is a small
 set of V8 options that are widely applicable to Node.js, and they are
 documented here:
+
+<!-- v8-options start -->
+
+### `--abort-on-uncaught-exception`
+
+### `--disallow-code-generation-from-strings`
+
+### `--enable-etw-stack-walking`
+
+### `--harmony-shadow-realm`
+
+### `--huge-max-old-generation-size`
+
+### `--jitless`
+
+### `--interpreted-frames-native-stack`
+
+### `--prof`
+
+### `--perf-basic-prof`
+
+### `--perf-basic-prof-only-functions`
+
+### `--perf-prof`
+
+### `--perf-prof-unwinding-info`
 
 ### `--max-old-space-size=SIZE` (in megabytes)
 
@@ -2920,6 +3041,19 @@ for MiB in 16 32 64 128; do
 done
 ```
 
+### `--security-revert`
+
+### `--stack-trace-limit=limit`
+
+The maximum number of stack frames to collect in an error's stack trace.
+Setting it to 0 disables stack trace collection. The default value is 10.
+
+```bash
+node --stack-trace-limit=12 -p -e "Error.stackTraceLimit" # prints 12
+```
+
+<!-- v8-options end -->
+
 [#42511]: https://github.com/nodejs/node/issues/42511
 [Chrome DevTools Protocol]: https://chromedevtools.github.io/devtools-protocol/
 [CommonJS]: modules.md
@@ -2930,6 +3064,7 @@ done
 [ExperimentalWarning: `vm.measureMemory` is an experimental feature]: vm.md#vmmeasurememoryoptions
 [Fetch API]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 [File System Permissions]: permissions.md#file-system-permissions
+[Loading ECMAScript modules using `require()`]: modules.md#loading-ecmascript-modules-using-require
 [Module customization hooks]: module.md#customization-hooks
 [Module customization hooks: enabling]: module.md#enabling
 [Modules loaders]: packages.md#modules-loaders
@@ -2975,6 +3110,8 @@ done
 [`dnsPromises.lookup()`]: dns.md#dnspromiseslookuphostname-options
 [`import` specifier]: esm.md#import-specifiers
 [`process.setUncaughtExceptionCaptureCallback()`]: process.md#processsetuncaughtexceptioncapturecallbackfn
+[`process.setuid()`]: process.md#processsetuidid
+[`setuid(2)`]: https://man7.org/linux/man-pages/man2/setuid.2.html
 [`tls.DEFAULT_MAX_VERSION`]: tls.md#tlsdefault_max_version
 [`tls.DEFAULT_MIN_VERSION`]: tls.md#tlsdefault_min_version
 [`unhandledRejection`]: process.md#event-unhandledrejection

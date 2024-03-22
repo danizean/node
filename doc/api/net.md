@@ -20,6 +20,14 @@ const net = require('node:net');
 
 ## IPC support
 
+<!-- YAML
+changes:
+  - version: v20.8.0
+    pr-url: https://github.com/nodejs/node/pull/49667
+    description: Support binding to abstract Unix domain socket path like `\0abstract`.
+                 We can bind '\0' for Node.js `< v20.4.0`.
+-->
+
 The `node:net` module supports IPC with named pipes on Windows, and Unix domain
 sockets on other operating systems.
 
@@ -694,10 +702,10 @@ See [`net.createConnection()`][].
 ### Event: `'connectionAttempt'`
 
 <!-- YAML
-added: REPLACEME
+added: v21.6.0
 -->
 
-* `ip` {number} The IP which the socket is attempting to connect to.
+* `ip` {string} The IP which the socket is attempting to connect to.
 * `port` {number} The port which the socket is attempting to connect to.
 * `family` {number} The family of the IP. It can be `6` for IPv6 or `4` for IPv4.
 
@@ -707,10 +715,10 @@ if the family autoselection algorithm is enabled in [`socket.connect(options)`][
 ### Event: `'connectionAttemptFailed'`
 
 <!-- YAML
-added: REPLACEME
+added: v21.6.0
 -->
 
-* `ip` {number} The IP which the socket attempted to connect to.
+* `ip` {string} The IP which the socket attempted to connect to.
 * `port` {number} The port which the socket attempted to connect to.
 * `family` {number} The family of the IP. It can be `6` for IPv6 or `4` for IPv4.
   \* `error` {Error} The error associated with the failure.
@@ -721,10 +729,10 @@ if the family autoselection algorithm is enabled in [`socket.connect(options)`][
 ### Event: `'connectionAttemptTimeout'`
 
 <!-- YAML
-added: REPLACEME
+added: v21.6.0
 -->
 
-* `ip` {number} The IP which the socket attempted to connect to.
+* `ip` {string} The IP which the socket attempted to connect to.
 * `port` {number} The port which the socket attempted to connect to.
 * `family` {number} The family of the IP. It can be `6` for IPv6 or `4` for IPv4.
 

@@ -31,6 +31,7 @@ The current security stewards are documented in the main Node.js
 | NearForm     | Rafael          | 2023-Jun-20  |
 | NearForm     | Rafael          | 2023-Aug-09  |
 | NearForm     | Rafael          | 2023-Oct-13  |
+| NodeSource   | Rafael          | 2024-Feb-14  |
 | Datadog      | Bryan           |              |
 | IBM          | Joe             |              |
 | Platformatic | Matteo          |              |
@@ -124,7 +125,7 @@ out a better way, forward the email you receive to
 `oss-security@lists.openwall.com` as a CC.
 
 * [ ] Post in the [nodejs-social channel][]
-  in the OpenJS slack asking for amplication of the blog post.
+  in the OpenJS slack asking for amplification of the blog post.
 
   ```text
   Security release pre-alert:
@@ -184,7 +185,7 @@ out a better way, forward the email you receive to
   ```
 
 * [ ] Post in the [nodejs-social channel][]
-  in the OpenJS slack asking for amplication of the blog post.
+  in the OpenJS slack asking for amplification of the blog post.
   ```text
   Security release:
 

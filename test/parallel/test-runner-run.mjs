@@ -195,9 +195,16 @@ describe('require(\'node:test\').run', { concurrency: true }, () => {
         signal: controller.signal,
       })
         .compose(async function* (source) {
+          let waitForCancel = 2;
           for await (const chunk of source) {
-            if (chunk.type === 'test:pass') {
+            if (chunk.type === 'test:watch:drained' ||
+                (chunk.type === 'test:diagnostic' && chunk.data.message.startsWith('duration_ms'))) {
+              waitForCancel--;
+            }
+            if (waitForCancel === 0) {
               controller.abort();
+            }
+            if (chunk.type === 'test:pass') {
               yield chunk.data.name;
             }
           }
@@ -511,5 +518,23 @@ describe('require(\'node:test\').run', { concurrency: true }, () => {
 
     // eslint-disable-next-line no-unused-vars
     for await (const _ of stream);
+  });
+});
+
+describe('forceExit', () => {
+  it('throws for non-boolean values', () => {
+    [Symbol(), {}, 0, 1, '1', Promise.resolve([])].forEach((forceExit) => {
+      assert.throws(() => run({ forceExit }), {
+        code: 'ERR_INVALID_ARG_TYPE',
+        message: /The "options\.forceExit" property must be of type boolean\./
+      });
+    });
+  });
+
+  it('throws if enabled with watch mode', () => {
+    assert.throws(() => run({ forceExit: true, watch: true }), {
+      code: 'ERR_INVALID_ARG_VALUE',
+      message: /The property 'options\.forceExit' is not supported with watch mode\./
+    });
   });
 });

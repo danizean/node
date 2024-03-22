@@ -35,6 +35,7 @@ struct ares_options {
   int udp_max_queries;
   int maxtimeout; /* in milliseconds */
   unsigned int qcache_max_ttl; /* in seconds */
+  ares_evsys_t evsys;
 };
 
 int ares_init_options(ares_channel_t **\fIchannelptr\fP,
@@ -46,7 +47,7 @@ int ares_init(ares_channel_t **\fIchannelptr\fP);
 .fi
 .SH DESCRIPTION
 The \fBares_init(3)\fP function is equivalent to calling
-\fBares_init_options(NULL, 0)\fP.  It is recommended to use
+\fBares_init_options(channelptr, NULL, 0)\fP.  It is recommended to use
 \fBares_init_options(3)\fP instead and to set or make configurable the
 appropriate options for your application.
 
@@ -119,6 +120,10 @@ used to test or debug name servers.
 .B ARES_FLAG_EDNS
 Include an EDNS pseudo-resource record (RFC 2671) in generated requests.  As of
 v1.22, this is on by default if flags are otherwise not set.
+.TP 23
+.B ARES_FLAG_NO_DFLT_SVR
+Do not attempt to add a default local named server if there are no other
+servers available.  Instead, fail initialization with \fIARES_ENOSERVER\fP.
 .RE
 .TP 18
 .B ARES_OPT_TIMEOUT
@@ -217,6 +222,8 @@ The value of
 will be passed as the
 .I data
 argument.
+
+Cannot be used with \fBARES_OPT_EVENT_THREAD\fP.
 .TP 18
 .B ARES_OPT_SORTLIST
 .B struct apattern *\fIsortlist\fP;
@@ -245,7 +252,7 @@ The receive buffer size to set for the socket.
 .br
 The message size to be advertised in EDNS; only takes effect if the
 .B ARES_FLAG_EDNS
-flag is set.  Defaults to 1280, the recommended size.
+flag is set.  Defaults to 1232, the recommended size.
 .TP 18
 .B ARES_OPT_RESOLVCONF
 .B char *\fIresolvconf_path\fP;
@@ -286,6 +293,29 @@ message. This must be a non-zero value otherwise the cache will be disabled.
 Choose a reasonable value for your application such as 300 (5 minutes) or
 3600 (1 hour).
 .br
+.TP 18
+.B ARES_OPT_EVENT_THREAD
+.B ares_evsys_t \fIevsys\fP;
+.br
+Enable the built-in event thread (Recommended). Introduced in c-ares 1.26.0.
+Set the \fIevsys\fP parameter to \fBARES_EVSYS_DEFAULT\fP (0).  Other values are
+reserved for testing and should not be used by integrators.
+
+This option cannot be used with the \fBARES_OPT_SOCK_STATE_CB\fP option, nor the
+\fIares_set_socket_functions(3)\fP or
+\fIares_set_socket_configure_callback(3)\fP functions.
+
+When enabled, the integrator is no longer responsible for notifying c-ares of
+any events on the file descriptors, so \fIares_process(3)\fP nor
+\fIares_process_fd(3)\fP should ever be called when this option is enabled.
+
+Use \fIares_threadsafety(3)\fP to determine if this option is available to be
+used.
+
+Returns \fBARES_ENOTIMP\fP if this option is passed but not available, and
+\fBARES_ESERVFAIL\fP if there is a critical failure during initialization of
+the event thread.
+.br
 .PP
 The \fIoptmask\fP parameter also includes options without a corresponding
 field in the
@@ -316,6 +346,9 @@ The process's available memory was exhausted.
 .TP 14
 .B ARES_ENOTINITIALIZED
 c-ares library initialization not yet performed.
+.TP 14
+.B ARES_ENOSERVER
+No DNS servers were available to use.
 .SH NOTES
 When initializing from
 .B /etc/resolv.conf,

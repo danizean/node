@@ -73,6 +73,7 @@ myEmitter.on('event', function(a, b) {
   //     _events: [Object: null prototype] { event: [Function (anonymous)] },
   //     _eventsCount: 1,
   //     _maxListeners: undefined,
+  //     [Symbol(shapeMode)]: false,
   //     [Symbol(kCapture)]: false
   //   } true
 });
@@ -90,6 +91,7 @@ myEmitter.on('event', function(a, b) {
   //     _events: [Object: null prototype] { event: [Function (anonymous)] },
   //     _eventsCount: 1,
   //     _maxListeners: undefined,
+  //     [Symbol(shapeMode)]: false,
   //     [Symbol(kCapture)]: false
   //   } true
 });
@@ -1815,7 +1817,7 @@ added:
 
 * `signal` {AbortSignal}
 * `listener` {Function|EventListener}
-* Returns: {Disposable} that removes the `abort` listener.
+* Returns: {Disposable} A Disposable that removes the `abort` listener.
 
 Listens once to the `abort` event on the provided `signal`.
 
